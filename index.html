@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cbyus - Empowering Teams with AI, DevTools & Cybersecurity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #a855f7, #3b82f6, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #a855f7, #3b82f6);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.5);
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+        }
+        #particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, #a855f7, #3b82f6);
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: #a855f7;
+            border-radius: 50%;
+        }
+        #slideshow-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .slideshow-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        /* Innovative Navigation Styles */
+        #nav-sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+            z-index: 50;
+            transition: left 0.5s ease;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        #nav-sidebar.open {
+            left: 0;
+        }
+        .nav-item {
+            position: relative;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        .nav-item:hover {
+            background: rgba(168, 85, 247, 0.2);
+            transform: translateX(10px);
+        }
+        .nav-item.active {
+            background: rgba(168, 85, 247, 0.4);
+            border-left: 4px solid #a855f7;
+        }
+        #nav-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 60;
+            background: linear-gradient(45deg, #a855f7, #3b82f6);
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+        .tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .nav-item:hover .tooltip {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Particle Background -->
+    <canvas id="particles"></canvas>
+
+    <!-- Navigation Toggle Button -->
+    <button id="nav-toggle" class="text-white focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+    </button>
+
+    <!-- Innovative Sidebar Navigation -->
+    <nav id="nav-sidebar" class="hidden md:block">
+        <div class="flex items-center space-x-3 p-6 border-b border-gray-700">
+            <img src="Gemini_Generated_Image_k6fdtfk6fdtfk6fd.png" alt="Cbyus Logo" class="h-10 w-10 rounded-full">
+            <span class="text-2xl font-bold gradient-text font-orbitron">Cbyus</span>
+        </div>
+        <div class="flex flex-col py-6">
+            <a href="#home" class="nav-item text-gray-300 hover:text-white"><span>Home</span><span class="tooltip">Welcome to Cbyus</span></a>
+            <a href="#problem" class="nav-item text-gray-300 hover:text-white"><span>Problem</span><span class="tooltip">Challenges We Address</span></a>
+            <a href="#solution" class="nav-item text-gray-300 hover:text-white"><span>Solution</span><span class="tooltip">Our AI & Cybersecurity Tools</span></a>
+            <a href="#market" class="nav-item text-gray-300 hover:text-white"><span>Market</span><span class="tooltip">Market Opportunity</span></a>
+            <a href="#gtm" class="nav-item text-gray-300 hover:text-white"><span>Go-To-Market</span><span class="tooltip">Our Strategy</span></a>
+            <a href="#revenue" class="nav-item text-gray-300 hover:text-white"><span>Revenue</span><span class="tooltip">Pricing & Revenue Model</span></a>
+            <a href="#roadmap" class="nav-item text-gray-300 hover:text-white"><span>Roadmap</span><span class="tooltip">Our Milestones</span></a>
+            <a href="#founding-team" class="nav-item text-gray-300 hover:text-white"><span>Founding Team</span><span class="tooltip">Join Our Team</span></a>
+            <a href="#investment" class="nav-item text-gray-300 hover:text-white"><span>Investment</span><span class="tooltip">Invest in Cbyus</span></a>
+            <a href="#pitch-deck" class="nav-item text-gray-300 hover:text-white"><span>Pitch Deck</span><span class="tooltip">View Our Pitch</span></a>
+            <a href="#contact" class="nav-item text-gray-300 hover:text-white"><span>Contact</span><span class="tooltip">Get in Touch</span></a>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-900 bg-opacity-90 w-full absolute top-0 left-0 z-40">
+        <div class="flex items-center justify-between p-6 border-b border-gray-700">
+            <div class="flex items-center space-x-3">
+                <img src="Gemini_Generated_Image_k6fdtfk6fdtfk6fd.png" alt="Cbyus Logo" class="h-10 w-10 rounded-full">
+                <span class="text-2xl font-bold gradient-text font-orbitron">Cbyus</span>
+            </div>
+            <button class="text-white focus:outline-none" onclick="toggleMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <nav class="flex flex-col items-center py-6 space-y-4">
+            <a href="#home" class="text-gray-300 hover:text-white transition duration-300">Home</a>
+            <a href="#problem" class="text-gray-300 hover:text-white transition duration-300">Problem</a>
+            <a href="#solution" class="text-gray-300 hover:text-white transition duration-300">Solution</a>
+            <a href="#market" class="text-gray-300 hover:text-white transition duration-300">Market</a>
+            <a href="#gtm" class="text-gray-300 hover:text-white transition duration-300">Go-To-Market</a>
+            <a href="#revenue" class="text-gray-300 hover:text-white transition duration-300">Revenue</a>
+            <a href="#roadmap" class="text-gray-300 hover:text-white transition duration-300">Roadmap</a>
+            <a href="#founding-team" class="text-gray-300 hover:text-white transition duration-300">Founding Team</a>
+            <a href="#investment" class="text-gray-300 hover:text-white transition duration-300">Investment</a>
+            <a href="#pitch-deck" class="text-gray-300 hover:text-white transition duration-300">View Pitch Deck</a>
+            <a href="#contact" class="text-gray-300 hover:text-white transition duration-300">Contact</a>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <main id="home" class="flex-grow flex items-center justify-center min-h-screen p-6 md:p-12 relative">
+        <div class="text-center max-w-5xl">
+            <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 gradient-text section-title animate-hero">
+                AI-Powered DevTools & Cybersecurity
+            </h1>
+            <p class="text-lg md:text-2xl text-gray-300 mb-8 animate-hero delay-100">
+                Cbyus empowers teams to build and secure apps with AI-driven tools and zero DevOps complexity. Join our founding team or invest in our vision.
+            </p>
+            <div class="space-x-4">
+                <a href="#founding-team" class="inline-block px-8 py-4 rounded-full font-semibold text-white btn-primary shadow-lg animate-hero delay-200">
+                    Join the Founding Team
+                </a>
+                <a href="#investment" class="inline-block px-8 py-4 rounded-full font-semibold text-gray-300 border border-gray-600 hover:border-white hover:text-white transition duration-300 animate-hero delay-300">
+                    Invest in Cbyus
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Problem Section -->
+    <section id="problem" class="py-20 px-6 md:px-12 bg-gray-900 bg-opacity-80">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">The Challenges We Solve</h2>
+        <div class="max-w-4xl mx-auto text-gray-300">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                    <h3 class="text-2xl font-semibold mb-4 text-white">Developer Pain Points</h3>
+                    <ul class="list-disc list-inside text-gray-400">
+                        <li>Complex job queues like Celery and Docker</li>
+                        <li>JS-heavy fullstack complexity</li>
+                        <li>No Python-native reactive frameworks</li>
+                        <li>Locked-in cloud infrastructure</li>
+                    </ul>
+                </div>
+                <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                    <h3 class="text-2xl font-semibold mb-4 text-white">Startup Struggles</h3>
+                    <ul class="list-disc list-inside text-gray-400">
+                        <li>Missing simple cybersecurity tools</li>
+                        <li>No budget or expertise for secure stacks</li>
+                        <li>Security reactive, not embedded</li>
+                        <li>Users lack embedded AI assistants</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="py-20 px-6 md:px-12 bg-gradient-to-b from-gray-900 to-black">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Our Cybersecurity & DevTools Solutions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-gray-300">
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Empower Every Developer</h3>
+                <p class="text-gray-400">Build and secure apps without DevOps or dedicated security teams, enabling seamless development.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">AI-First DevTools</h3>
+                <p class="text-gray-400">PyCompute and LangForge: No-cloud tools for Python/Ruby ecosystems using local LLMs (Mistral, LLaMA).</p>
+                <p class="text-gray-500 mt-2"><strong>Progress:</strong> MVPs in development, targeting Q2 2025 launch.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Zero-Config Cybersecurity</h3>
+                <p class="text-gray-400">CyberGuardAI: Accessible security tools for startups and non-technical founders to embed protection.</p>
+                <p class="text-gray-500 mt-2"><strong>Progress:</strong> Beta launch planned for Q3 2025, with focus on threat detection.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Embedded AI Assistants</h3>
+                <p class="text-gray-400">AppAgentAI: AI helpers integrated into apps for enhanced security and user experience.</p>
+                <p class="text-gray-500 mt-2"><strong>Progress:</strong> Alpha launch scheduled for Q1 2026.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Now Section -->
+    <section id="why-now" class="py-20 px-6 md:px-12 bg-gray-900 bg-opacity-80">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Why the Time is Now</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-gray-300">
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">AI Explosion</h3>
+                <p class="text-gray-400">Local LLMs like Mistral, Phi, and LLaMA are fueling AI-driven development tools.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Developer Demand</h3>
+                <p class="text-gray-400">No-cloud, no-bloat tooling is critical for developers seeking simplicity.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Rising Cybercrime</h3>
+                <p class="text-gray-400">Startups urgently need accessible cybersecurity solutions to combat growing threats.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Embedded AI</h3>
+                <p class="text-gray-400">AI agents must live inside apps for seamless, secure user experiences.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Opportunity Section -->
+    <section id="market" class="py-20 px-6 md:px-12 bg-gradient-to-t from-gray-900 to-black">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Massive Market Potential</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-gray-300">
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">$15B DevTools Market</h3>
+                <p class="text-gray-400">Serving 30M developers globally with AI-powered, no-ops tools.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">$200B Cybersecurity Market</h3>
+                <p class="text-gray-400">Targeting millions of non-technical founders needing simple, AI-driven security solutions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Go-To-Market Strategy Section -->
+    <section id="gtm" class="py-20 px-6 md:px-12 bg-gray-900 bg-opacity-80">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Go-To-Market Strategy</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-gray-300">
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">DevRel-First Approach</h3>
+                <p class="text-gray-400">Launch via GitHub, Hacker News, Reddit, and Product Hunt to engage developers.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Freemium + Paid Tiers</h3>
+                <p class="text-gray-400">Open-core model with paid Pro features for teams and enterprises.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Community Building</h3>
+                <p class="text-gray-400">Engage users via Discord for feedback and beta testing, plus partnerships with incubators.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Revenue Model Section -->
+    <section id="revenue" class="py-20 px-6 md:px-12 bg-gradient-to-b from-gray-900 to-black">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Revenue Model & Pricing</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-gray-300">
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">DevTools</h3>
+                <p class="text-gray-400">Open-source with paid Pro features ($9–$99/month per developer) including cloud sync, dashboards, and support.</p>
+            </div>
+            <div class="card-hover bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                <h3 class="text-2xl font-semibold mb-4 text-white">Cybersecurity SaaS</h3>
+                <p class="text-gray-400">CyberGuardAI: AI-powered security ($19–$299/month) with offline licenses for enterprise and government.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="py-20 px-6 md:px-12 bg-gray-900 bg-opacity-80">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Traction Roadmap</h2>
+        <div class="max-w-4xl mx-auto space-y-12 text-gray-300">
+            <div class="timeline-item card-hover">
+                <h3 class="text-2xl font-semibold mb-2 text-white">PyCompute + LangForge MVP (Q2 2025)</h3>
+                <p class="text-gray-400">Launch AI-driven DevTools for Python and Ruby ecosystems with zero DevOps.</p>
+            </div>
+            <div class="timeline-item card-hover">
+                <h3 class="text-2xl font-semibold mb-2 text-white">CyberGuardAI Beta Launch (Q3 2025)</h3>
+                <p class="text-gray-400">Roll out AI-powered cybersecurity tools for startups, focusing on embedded threat detection.</p>
+            </div>
+            <div class="timeline-item card-hover">
+                <h3 class="text-2xl font-semibold mb-2 text-white">5,000 GitHub Stars (Q3–Q4 2025)</h3>
+                <p class="text-gray-400">Build developer traction through open-source contributions and community engagement.</p>
+            </div>
+            <div class="timeline-item card-hover">
+                <h3 class="text-2xl font-semibold mb-2 text-white">First 10 Paying Teams (Q4 2025)</h3>
+                <p class="text-gray-400">Onboard initial customers for paid Pro features in DevTools and Cybersecurity.</p>
+            </div>
+            <div class="timeline-item card-hover">
+                <h3 class="text-2xl font-semibold mb-2 text-white">AppAgentAI Alpha Launch (Q1 2026)</h3>
+                <p class="text-gray-400">Introduce embedded AI assistants for enhanced app security and user experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founding Team Section -->
+    <section id="founding-team" class="py-20 px-6 md:px-12 bg-gradient-to-t from-gray-900 to-black">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Join Our Founding Team</h2>
+        <div class="max-w-4xl mx-auto text-center text-gray-300">
+            <p class="text-lg mb-6">
+                Founded by Sujith Krishnan, a seasoned technology leader from India, Cbyus is seeking visionary co-founders to build AI-driven DevTools and cybersecurity solutions.
+            </p>
+            <p class="text-lg mb-6">
+                <strong>Roles We’re Seeking:</strong>
+                <ul class="list-disc list-inside text-left mx-auto max-w-md">
+                    <li>CTO: Lead development of PyCompute, LangForge, and AppAgentAI.</li>
+                    <li>Head of AI: Innovate with local LLMs for DevTools and assistants.</li>
+                    <li>Cybersecurity Lead: Develop CyberGuardAI for startup security.</li>
+                    <li>Business Lead: Drive GTM, partnerships, and community growth.</li>
+                </ul>
+            </p>
+            <a href="#contact" class="inline-block px-8 py-4 rounded-full font-semibold text-white btn-primary shadow-lg">
+                Apply to Join the Team
+            </a>
+        </div>
+    </section>
+
+    <!-- Investment Section -->
+    <section id="investment" class="py-20 px-6 md:px-12 bg-gray-900 bg-opacity-80">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Invest in Cbyus</h2>
+        <div class="max-w-4xl mx-auto text-center text-gray-300">
+            <p class="text-lg mb-6">
+                Cbyus is raising $50,000 in pre-seed funding to accelerate AI-driven DevTools and cybersecurity solutions for startups and developers.
+            </p>
+            <p class="text-lg mb-6">
+                <strong>Fund Allocation:</strong>
+                <ul class="list-disc list-inside text-left mx-auto max-w-md">
+                    <li>40%: Product Development (CyberGuardAI, AppAgentAI)</li>
+                    <li>25%: Go-To-Market & Community Building</li>
+                    <li>25%: Infrastructure & Documentation</li>
+                    <li>10%: Legal & Compliance</li>
+                </ul>
+            </p>
+            <p class="text-lg mb-6">
+                <strong>Why Invest?</strong> Tap into $15B DevTools and $200B cybersecurity markets with a unique, no-ops, AI-powered platform.
+            </p>
+            <a href="#contact" class="inline-block px-8 py-4 rounded-full font-semibold text-white btn-primary shadow-lg">
+                Connect with Us
+            </a>
+        </div>
+    </section>
+
+    <!-- Pitch Deck Viewer Section -->
+    <section id="pitch-deck" class="py-20 px-6 md:px-12 bg-gradient-to-b from-gray-900 to-black">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">View Our Pitch Deck</h2>
+        <div class="max-w-4xl mx-auto text-center text-gray-300">
+            <p class="text-lg mb-6">
+                Discover our vision, strategy, and roadmap for AI-driven DevTools and cybersecurity. Click below to view the slides (view-only).
+            </p>
+            <div class="inline-block px-8 py-4 rounded-full font-semibold text-white btn-primary shadow-lg cursor-pointer" onclick="openSlideshow()">
+                View Pitch Deck
+            </div>
+        </div>
+    </section>
+
+    <!-- Slideshow Modal -->
+    <div id="slideshow-modal">
+        <div class="relative max-w-4xl mx-auto">
+            <img id="slideshow-image" class="slideshow-image" src="image-1002-1.png" alt="Pitch Deck Slide">
+            <button class="absolute top-4 right-4 text-white text-2xl" onclick="closeSlideshow()">✕</button>
+            <button class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl" onclick="prevSlide()">◄</button>
+            <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl" onclick="nextSlide()">►</button>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 md:px-12 bg-gray-900 bg-opacity-80">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Get in Touch</h2>
+        <div class="max-w-xl mx-auto space-y-6">
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                <input type="text" id="name" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="Your Name">
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                <input type="email" id="email" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="sjklearning@gmail.com">
+            </div>
+            <div>
+                <label for="role" class="block text-sm font-medium text-gray-300 mb-2">Interested In</label>
+                <select id="role" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white">
+                    <option value="founding-team">Founding Team</option>
+                    <option value="investor">Investor</option>
+                    <option value="advisor">Advisor</option>
+                    <option value="collaborator">Collaborator</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                <textarea id="message" rows="5" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="Tell us about your interest in Cbyus..."></textarea>
+            </div>
+            <div class="w-full px-6 py-3 rounded-full font-semibold text-white btn-primary shadow-lg text-center cursor-pointer" onclick="submitContact()">Send Message</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="w-full py-8 px-6 md:px-12 bg-gray-900 bg-opacity-70 text-center text-gray-500 text-sm">
+        <div class="mb-4">
+            <a href="#privacy" class="text-gray-400 hover:text-white mx-2">Privacy Policy</a>
+            <a href="#terms" class="text-gray-400 hover:text-white mx-2">Terms of Service</a>
+            <a href="#contact" class="text-gray-400 hover:text-white mx-2">Contact Us</a>
+        </div>
+        <p>© 2025 Cbyus. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Particle Background with Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('particles'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const particles = new THREE.BufferGeometry();
+        const particleCount = 1000;
+        const posArray = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
+        }
+
+        particles.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const material = new THREE.PointsMaterial({ color: 0x8888ff, size: 0.2 });
+        const particleSystem = new THREE.Points(particles, material);
+        scene.add(particleSystem);
+        camera.position.z = 50;
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            particleSystem.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.from('.animate-hero', {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.2,
+            ease: 'power2.out'
+        });
+
+        gsap.utils.toArray('.card-hover').forEach(card => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        });
+
+        // Innovative Navigation
+        const navSidebar = document.getElementById('nav-sidebar');
+        const navToggle = document.getElementById('nav-toggle');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        navToggle.addEventListener('click', () => {
+            navSidebar.classList.toggle('open');
+        });
+
+        // Highlight active section
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('section, main');
+            let currentSection = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                    currentSection = section.id;
+                }
+            });
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${currentSection}`) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveNav);
+        updateActiveNav();
+
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Placeholder Contact Submission
+        function submitContact() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const role = document.getElementById('role').value;
+            const message = document.getElementById('message').value;
+            alert(`Thank you, ${name}! Your interest in joining Cbyus as a ${role} has been noted. We'll reach out soon!`);
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('role').value = 'founding-team';
+            document.getElementById('message').value = '';
+        }
+
+        // Pitch Deck Slideshow
+        const slides = [
+            'image-1002-1.png', 'image-1-1.png', 'image-1-2.png', 'image-1003-1.png', 'image-2-1.png',
+            'image-1004-1.png', 'image-1005-1.png', 'image-4-1.png', 'image-1006-1.png', 'image-5-1.png',
+            'image-5-2.png', 'image-5-3.png', 'image-5-4.png', 'image-1007-1.png', 'image-6-1.png',
+            'image-6-2.png', 'image-6-3.png', 'image-6-4.png', 'image-6-5.png', 'image-1008-1.png',
+            'image-7-1.png', 'image-1009-1.png', 'image-1010-1.png', 'image-1011-1.png', 'image-10-1.png',
+            'image-1012-1.png', 'image-11-1.png'
+        ];
+        let currentSlide = 0;
+
+        function openSlideshow() {
+            document.getElementById('slideshow-modal').style.display = 'flex';
+            document.getElementById('slideshow-image').src = slides[currentSlide];
+        }
+
+        function closeSlideshow() {
+            document.getElementById('slideshow-modal').style.display = 'none';
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            document.getElementById('slideshow-image').src = slides[currentSlide];
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            document.getElementById('slideshow-image').src = slides[currentSlide];
+        }
+    </script>
+</body>
+</html>
