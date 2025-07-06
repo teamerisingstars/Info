@@ -29,6 +29,14 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(168, 85, 247, 0.5);
         }
+        .btn-secondary {
+            background: linear-gradient(45deg, #10b981, #14b8a6);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+        }
         .section-title {
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 2px;
@@ -214,7 +222,7 @@
                 <a href="#founding-team" class="inline-block px-8 py-4 rounded-full font-semibold text-white btn-primary shadow-lg animate-hero delay-200">
                     Join the Founding Team
                 </a>
-                <a href="#investment" class="inline-block px-8 py-4 rounded-full font-semibold text-gray-300 border border-gray-600 hover:border-white hover:text-white transition duration-300 animate-hero delay-300">
+                <a href="#investment" class="inline-block px-8 py-4 rounded-full font-semibold text-white btn-secondary shadow-lg animate-hero delay-300">
                     Invest in Cbyus
                 </a>
             </div>
@@ -446,30 +454,35 @@
     <!-- Contact Section -->
     <section id="contact" class="py-20 px-6 md:px-12 bg-gray-900 bg-opacity-80">
         <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text section-title">Get in Touch</h2>
-        <div class="max-w-xl mx-auto space-y-6">
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                <input type="text" id="name" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="Your Name">
-            </div>
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                <input type="email" id="email" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="sjklearning@gmail.com">
-            </div>
-            <div>
-                <label for="role" class="block text-sm font-medium text-gray-300 mb-2">Interested In</label>
-                <select id="role" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white">
-                    <option value="founding-team">Founding Team</option>
-                    <option value="investor">Investor</option>
-                    <option value="advisor">Advisor</option>
-                    <option value="collaborator">Collaborator</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div>
-                <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Message</label>
-                <textarea id="message" rows="5" class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="Tell us about your interest in Cbyus..."></textarea>
-            </div>
-            <div class="w-full px-6 py-3 rounded-full font-semibold text-white btn-primary shadow-lg text-center cursor-pointer" onclick="submitContact()">Send Message</div>
+        <div class="max-w-xl mx-auto">
+            <form action="https://formspree.io/f/xeokwlap" method="POST" class="space-y-6" id="contactForm">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                    <input type="text" id="name" name="name" required class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="Your Name">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="your@example.com">
+                </div>
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-300 mb-2">Interested In</label>
+                    <select id="role" name="role" required class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white">
+                        <option value="founding-team">Founding Team</option>
+                        <option value="investor">Investor</option>
+                        <option value="advisor">Advisor</option>
+                        <option value="collaborator">Collaborator</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                    <textarea id="message" name="message" rows="5" required class="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white" placeholder="Tell us about your interest in Cbyus..."></textarea>
+                </div>
+                <button type="submit" class="w-full px-6 py-3 rounded-full font-semibold text-white btn-primary shadow-lg">
+                    Send Message
+                </button>
+                <div id="formStatus" class="hidden text-center p-3 rounded-md"></div>
+            </form>
         </div>
     </section>
 
@@ -578,18 +591,48 @@
             menu.classList.toggle('hidden');
         }
 
-        // Placeholder Contact Submission
-        function submitContact() {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const role = document.getElementById('role').value;
-            const message = document.getElementById('message').value;
-            alert(`Thank you, ${name}! Your interest in joining Cbyus as a ${role} has been noted. We'll reach out soon!`);
-            document.getElementById('name').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('role').value = 'founding-team';
-            document.getElementById('message').value = '';
-        }
+        // Contact Form Submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const statusDiv = document.getElementById('formStatus');
+            const submitButton = form.querySelector('button[type="submit"]');
+            
+            // Show loading state
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+            statusDiv.className = 'text-center p-3 rounded-md bg-blue-900 text-blue-200';
+            statusDiv.textContent = 'Sending your message...';
+            statusDiv.classList.remove('hidden');
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    statusDiv.className = 'text-center p-3 rounded-md bg-green-900 text-green-200';
+                    statusDiv.textContent = 'Thank you! Your message has been sent successfully.';
+                    form.reset();
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .catch(error => {
+                statusDiv.className = 'text-center p-3 rounded-md bg-red-900 text-red-200';
+                statusDiv.textContent = 'Sorry, there was an error sending your message. Please try again.';
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                submitButton.textContent = 'Send Message';
+                submitButton.disabled = false;
+            });
+        });
 
         // Pitch Deck Slideshow
         const slides = [
